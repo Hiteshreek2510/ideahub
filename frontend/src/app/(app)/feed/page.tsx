@@ -9,6 +9,7 @@ import {
   Loader2
 } from "lucide-react";
 import { fetchAPI } from "@/lib/api";
+import Link from "next/link";
 
 export default function Feed() {
   const [liked, setLiked] = useState<Record<number, boolean>>({});
@@ -81,14 +82,24 @@ export default function Feed() {
             <h2 className="text-xl font-bold text-slate-100 mb-2 leading-snug">
               {idea.title}
             </h2>
-            <p className="text-slate-300 text-base leading-relaxed mb-5">
+            <p className="text-slate-300 text-base leading-relaxed mb-5 whitespace-pre-wrap">
               {idea.description}
             </p>
+
+            {idea.media_url && (
+              <div className="mb-5 rounded-xl overflow-hidden border border-white/5 bg-black/40">
+                {idea.media_type === 'video' ? (
+                  <video src={idea.media_url} controls className="w-full max-h-[500px] object-contain" />
+                ) : (
+                  <img src={idea.media_url} alt="Attached Media" className="w-full max-h-[500px] object-cover" />
+                )}
+              </div>
+            )}
 
             {/* Sub-info chip */}
             <div className="bg-[#1a1a2e] border border-white/5 rounded-lg p-3 flex flex-wrap items-center gap-2 mb-5">
               {idea.tags && idea.tags.length > 0 && idea.tags.map((tag: string) => (
-                 <span key={tag} className="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 font-medium">#{tag}</span>
+                 <span key={tag.trim()} className="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 font-medium">#{tag.trim()}</span>
               ))}
             </div>
 
@@ -129,9 +140,9 @@ export default function Feed() {
 
       {/* Floating Action Button for mobile/general posting */}
       <div className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-50">
-        <button className="w-14 h-14 bg-purple-600 rounded-full shadow-lg shadow-purple-600/40 flex items-center justify-center text-white hover:bg-purple-500 hover:scale-105 active:scale-95 transition-all">
+        <Link href="/create" className="w-14 h-14 bg-purple-600 rounded-full shadow-lg shadow-purple-600/40 flex items-center justify-center text-white hover:bg-purple-500 hover:scale-105 active:scale-95 transition-all">
           <Plus className="w-6 h-6" />
-        </button>
+        </Link>
       </div>
     </div>
   );

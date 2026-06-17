@@ -1,4 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IdeasService } from './ideas.service';
 import { CreateIdeaDto } from './dto/create-idea.dto';
 import { UpdateIdeaDto } from './dto/update-idea.dto';
@@ -7,16 +9,30 @@ import { UpdateIdeaDto } from './dto/update-idea.dto';
 export class IdeasController {
   constructor(private readonly ideasService: IdeasService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    return this.ideasService.uploadFile(file);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Body() createIdeaDto: CreateIdeaDto,
-    @Headers('x-user-id') userId: string
+    @Request() req: any
   ) {
-    // In production, userId will come from JwtAuthGuard (req.user.id)
-    if (!userId) {
-      throw new Error("Missing x-user-id header for testing");
-    }
+    const userId = req.user.id;
     return this.ideasService.create(createIdeaDto, userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  findMyIdeas(@Request() req: any) {
+    return this.ideasService.findAll(req.user.id);
   }
 
   @Get()

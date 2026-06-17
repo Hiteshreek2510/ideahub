@@ -9,7 +9,14 @@ import { CommunityModule } from './community/community.module';
 import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, IdeasModule, CommunityModule, NotificationsModule],
+  imports: [
+    PrismaModule, 
+    AuthModule, 
+    UsersModule, 
+    IdeasModule, 
+    CommunityModule, 
+    NotificationsModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

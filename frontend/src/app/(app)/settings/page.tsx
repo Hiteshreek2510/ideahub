@@ -1,15 +1,103 @@
 "use client";
 
-import { useState } from "react";
-import { Camera, Shield, Lock, Globe, Save } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Camera, Shield, Lock, Globe, Save, Loader2 } from "lucide-react";
+import { fetchAPI } from "@/lib/api";
 
 export default function Settings() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [avatar, setAvatar] = useState("https://i.pravatar.cc/150?u=my_user");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const user = await fetchAPI('/users/me');
+        setIsPrivate(!user.is_public);
+        if (user.profile_image) {
+          setAvatar(user.profile_image);
+        }
+      } catch (err) {
+        console.error("Failed to load profile", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProfile();
+  }, []);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setSaving(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const uploadRes = await fetch(`${apiUrl}/ideas/upload`, {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formData
+      });
+
+      if (!uploadRes.ok) throw new Error('Failed to upload image');
+      
+      const data = await uploadRes.json();
+      setAvatar(data.url);
+      
+      // Auto-save the new avatar URL
+      await fetchAPI('/users/me', {
+        method: 'PATCH',
+        body: JSON.stringify({ profile_image: data.url })
+      });
+      window.dispatchEvent(new Event('avatar-updated'));
+      setMessage("Profile image updated!");
+    } catch (err) {
+      console.error(err);
+      setMessage("Error uploading image");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await fetchAPI('/users/me', {
+        method: 'PATCH',
+        body: JSON.stringify({ is_public: !isPrivate })
+      });
+      setMessage("Settings saved successfully!");
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to save settings");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center py-20"><Loader2 className="w-8 h-8 text-purple-500 animate-spin" /></div>;
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
       <h1 className="text-3xl font-bold text-white tracking-tight mb-8">Profile Settings</h1>
+
+      {message && (
+        <div className="mb-6 bg-purple-500/10 border border-purple-500/50 text-purple-400 p-4 rounded-xl text-sm font-medium">
+          {message}
+        </div>
+      )}
 
       <div className="space-y-6">
         
@@ -17,7 +105,7 @@ export default function Settings() {
         <section className="bg-[#121221] border border-white/5 rounded-2xl p-6 shadow-xl shadow-black/40">
           <h2 className="text-xl font-semibold text-white mb-6">Profile Image</h2>
           <div className="flex items-center gap-6">
-            <div className="relative group cursor-pointer">
+            <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
               <img 
                 src={avatar} 
                 alt="Profile" 
@@ -29,7 +117,12 @@ export default function Settings() {
             </div>
             <div>
               <div className="flex gap-3 mb-2">
-                <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-purple-600/20">
+                <input type="file" ref={fileInputRef} hidden accept="image/*" onChange={handleFileChange} />
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={saving}
+                  className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-purple-600/20 disabled:opacity-50"
+                >
                   Upload new
                 </button>
                 <button className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-sm font-semibold transition-colors border border-white/10">
@@ -88,9 +181,9 @@ export default function Settings() {
         </section>
 
         <div className="flex justify-end pt-4">
-          <button className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-purple-600/20 flex items-center gap-2">
+          <button onClick={handleSave} disabled={saving} className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl text-sm font-semibold transition-colors shadow-lg shadow-purple-600/20 flex items-center gap-2 disabled:opacity-50">
             <Save className="w-4 h-4" />
-            Save Changes
+            {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
 

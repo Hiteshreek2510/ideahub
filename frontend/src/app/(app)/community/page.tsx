@@ -16,35 +16,7 @@ export default function Community() {
   const [activeGroup, setActiveGroup] = useState(1);
   const [showMenu, setShowMenu] = useState(false);
 
-  const groups = [
-    {
-      id: 1,
-      name: "NeuroNav Core Team",
-      members: 4,
-      lastMessage: "Alex: I've pushed the new TensorFlow model to the repo.",
-      time: "10m",
-      isAdmin: true,
-      avatar: "https://i.pravatar.cc/150?u=10"
-    },
-    {
-      id: 2,
-      name: "CarbonTrace Backend",
-      members: 3,
-      lastMessage: "Sarah: Let's review the PostgreSQL schema tomorrow.",
-      time: "2h",
-      isAdmin: false,
-      avatar: "https://i.pravatar.cc/150?u=11"
-    },
-    {
-      id: 3,
-      name: "LexGuard Auditors",
-      members: 6,
-      lastMessage: "David: Found a reentrancy bug in the staging contract.",
-      time: "1d",
-      isAdmin: true,
-      avatar: "https://i.pravatar.cc/150?u=12"
-    }
-  ];
+  const groups: any[] = [];
 
   const currentGroup = groups.find(g => g.id === activeGroup);
 
@@ -55,36 +27,23 @@ export default function Community() {
       <div className="w-full md:w-80 border-r border-white/5 bg-[#070710] flex flex-col shrink-0">
         <div className="p-4 border-b border-white/5">
           <h2 className="text-xl font-bold text-white mb-4">Community</h2>
-          <div className="relative">
+          <div className="relative opacity-50 pointer-events-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input 
               type="text" 
               placeholder="Search groups..." 
               className="w-full bg-[#121221] border border-white/5 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500/50"
+              disabled
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-2">
-          {groups.map(group => (
-            <button
-              key={group.id}
-              onClick={() => {
-                setActiveGroup(group.id);
-                setShowMenu(false);
-              }}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all ${activeGroup === group.id ? 'bg-[#1a1a2e]' : 'hover:bg-white/5'}`}
-            >
-              <img src={group.avatar} alt="" className="w-10 h-10 rounded-lg object-cover border border-white/10 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-baseline mb-1">
-                  <h3 className="text-sm font-semibold text-slate-200 truncate pr-2">{group.name}</h3>
-                  <span className="text-[10px] text-slate-500 shrink-0">{group.time}</span>
-                </div>
-                <p className="text-xs text-slate-400 truncate">{group.lastMessage}</p>
-              </div>
-            </button>
-          ))}
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-center text-center">
+          <div className="w-12 h-12 bg-[#1a1a2e] rounded-full flex items-center justify-center mb-3 border border-white/5">
+            <Users className="w-5 h-5 text-slate-600" />
+          </div>
+          <p className="text-slate-300 text-sm font-medium mb-1">No groups yet</p>
+          <p className="text-slate-500 text-xs">Join a project to start collaborating with others.</p>
         </div>
       </div>
 

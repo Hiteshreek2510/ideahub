@@ -8,8 +8,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      // In production, SUPABASE_JWT_SECRET should be securely loaded from .env
-      secretOrKey: process.env.SUPABASE_JWT_SECRET || 'fallback-secret-for-dev',
+      // In production, JWT_SECRET should be securely loaded from .env
+      secretOrKey: process.env.JWT_SECRET || 'fallback_secret_for_local_testing',
     });
   }
 
