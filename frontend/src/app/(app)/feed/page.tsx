@@ -39,10 +39,10 @@ export default function Feed() {
     <div className="pb-24">
       {/* Mobile Header (Sidebar is hidden on mobile so we need a minimal header) */}
       <header className="md:hidden sticky top-0 z-40 bg-[#0c0c1a]/90 backdrop-blur-md border-b border-white/5 px-4 py-3 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-purple-600/30 shrink-0 text-sm">
-          I
+        <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-purple-600/30 shrink-0 overflow-hidden bg-black">
+          <img src="/logo.png" alt="IdeaHub Logo" className="w-full h-full object-cover" />
         </div>
-        <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">IdeaSpark</span>
+        <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">IdeaHub</span>
       </header>
 
       {/* Main Feed Container */}
@@ -98,7 +98,7 @@ export default function Feed() {
 
             {/* Sub-info chip */}
             <div className="bg-[#1a1a2e] border border-white/5 rounded-lg p-3 flex flex-wrap items-center gap-2 mb-5">
-              {idea.tags && idea.tags.length > 0 && idea.tags.map((tag: string) => (
+              {(idea.tags || []).map((tag: string) => (
                  <span key={tag.trim()} className="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 font-medium">#{tag.trim()}</span>
               ))}
             </div>

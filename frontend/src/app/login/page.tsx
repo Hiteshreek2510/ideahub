@@ -47,7 +47,7 @@ export default function Login() {
                         <Sparkles className="w-6 h-6" />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Welcome back</h1>
-                    <p className="text-slate-400">Sign in to IdeaSpark to continue building</p>
+                    <p className="text-slate-400">Sign in to IdeaHub to continue building</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="bg-[#121221] border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/50 space-y-5">

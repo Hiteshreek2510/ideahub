@@ -91,14 +91,14 @@ export default function MyPosts() {
 
                 {/* Tags */}
                 <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-white/5">
-                  {idea.tags && idea.tags.slice(0, 3).map((tag: string) => (
+                  {(idea.tags || []).map((tag: string) => (
                     <span key={tag.trim()} className="px-2 py-1 bg-white/5 rounded text-[10px] text-slate-300 font-medium uppercase tracking-wider">
                       {tag.trim()}
                     </span>
                   ))}
-                  {idea.tags && idea.tags.length > 3 && (
+                  {idea.tags && (typeof idea.tags === 'string' ? idea.tags.split(',') : idea.tags).length > 3 && (
                     <span className="px-2 py-1 bg-white/5 rounded text-[10px] text-slate-400 font-medium">
-                      +{idea.tags.length - 3}
+                      +{(typeof idea.tags === 'string' ? idea.tags.split(',') : idea.tags).length - 3}
                     </span>
                   )}
                 </div>

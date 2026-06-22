@@ -1,37 +1,38 @@
 "use client";
 
-import { Sparkles, Terminal, ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
+import { Sparkles, Terminal, ArrowRight, Users } from "lucide-react";
+import PublicNavbar from "@/components/PublicNavbar";
 
 export default function LandingPage() {
   const projects = [
     {
       title: "NeuroNav",
-      domain: "AI & ML",
+      domain: "Tech",
       domainColor: "text-purple-400",
       needed: 2,
       top: "15%",
       right: "20%"
     },
     {
-      title: "CarbonTrace",
-      domain: "Data Eng",
+      title: "Boutique Brews",
+      domain: "Food & Beverage",
       domainColor: "text-pink-400",
       needed: 3,
       top: "35%",
       right: "5%"
     },
     {
-      title: "LexGuard",
-      domain: "Security",
+      title: "Aura Skincare",
+      domain: "Beauty",
       domainColor: "text-amber-400",
       needed: 1,
       top: "55%",
       right: "25%"
     },
     {
-      title: "MeshLink",
-      domain: "Web3",
+      title: "Zenith Yoga",
+      domain: "Health & Wellness",
       domainColor: "text-blue-400",
       needed: 4,
       top: "75%",
@@ -46,28 +47,7 @@ export default function LandingPage() {
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
 
       {/* Navigation */}
-      <nav className="relative z-50 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white tracking-tight">IdeaSpark</span>
-        </div>
-        
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-          <Link href="#" className="hover:text-white transition-colors">How it works</Link>
-          <Link href="#" className="hover:text-white transition-colors">Domains</Link>
-          <Link href="#" className="hover:text-white transition-colors">Projects</Link>
-          <Link href="#" className="hover:text-white transition-colors">Stories</Link>
-        </div>
-
-        <div className="flex items-center gap-4 text-sm font-medium">
-          <Link href="/login" className="text-slate-300 hover:text-white transition-colors">Sign in</Link>
-          <Link href="/register" className="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl transition-all shadow-[0_0_15px_rgba(147,51,234,0.3)]">
-            Get started
-          </Link>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 h-[calc(100vh-80px)] flex items-center relative">
@@ -85,7 +65,7 @@ export default function LandingPage() {
           </h1>
           
           <p className="text-slate-400 text-lg md:text-xl leading-relaxed mb-10 max-w-lg">
-            IdeaSpark connects visionaries with engineers across every domain in computer science — from embedded systems to blockchain, AI to cybersecurity. Turn a concept into code.
+            IdeaHub connects visionaries with creators across every domain — from tech to beauty, food to entertainment. Turn a concept into reality.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -101,7 +81,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-12">
-            {["AI / ML", "Web3", "DevOps", "Mobile", "Security", "Data"].map(tag => (
+            {["Tech", "Beauty & Personal Care", "Food & Beverage", "Health & Wellness", "Services & Experiences", "Entertainment"].map(tag => (
               <span key={tag} className="px-4 py-1.5 rounded-full bg-[#121221] border border-white/5 text-xs text-slate-400 font-mono tracking-tight hover:bg-white/5 transition-colors cursor-pointer">
                 {tag}
               </span>

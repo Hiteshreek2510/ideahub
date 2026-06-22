@@ -31,11 +31,11 @@ export default function Sidebar() {
     <aside className="w-20 md:w-64 fixed h-full bg-[#0c0c1a] border-r border-white/5 flex flex-col justify-between py-6 z-50">
       <div>
         <div className="flex items-center gap-3 px-6 mb-10">
-          <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-purple-600/30 shrink-0 text-lg">
-            I
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg shadow-purple-600/30 shrink-0 overflow-hidden bg-black">
+            <img src="/logo.png" alt="IdeaHub Logo" className="w-full h-full object-cover" />
           </div>
           <span className="hidden md:block text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 tracking-tight">
-            IdeaSpark
+            IdeaHub
           </span>
         </div>
 

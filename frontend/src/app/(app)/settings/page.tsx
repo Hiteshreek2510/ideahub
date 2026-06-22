@@ -151,7 +151,7 @@ export default function Settings() {
               </div>
               <div>
                 <h3 className="text-base font-medium text-white mb-1">Public Profile</h3>
-                <p className="text-sm text-slate-400">Anyone on IdeaSpark can see your profile, skills, and the ideas you've posted.</p>
+                <p className="text-sm text-slate-400">Anyone on IdeaHub can see your profile, skills, and the ideas you've posted.</p>
               </div>
               <div className="ml-auto flex items-center h-full pt-2">
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${!isPrivate ? 'border-purple-500' : 'border-slate-600'}`}>

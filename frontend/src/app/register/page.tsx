@@ -48,7 +48,7 @@ export default function Register() {
                         <Sparkles className="w-6 h-6 text-teal-400" />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Create Account</h1>
-                    <p className="text-slate-400 text-center">Join visionaries and developers building the future on IdeaSpark.</p>
+                    <p className="text-slate-400 text-center">Join visionaries and developers building the future on IdeaHub.</p>
                 </div>
 
                 <form onSubmit={handleRegister} className="bg-[#121221] border border-white/10 rounded-2xl p-6 shadow-2xl shadow-black/50 space-y-5">
