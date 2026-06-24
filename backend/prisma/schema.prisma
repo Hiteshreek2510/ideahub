@@ -14,7 +14,7 @@ model User {
   password      String?
   profile_image String?
   bio           String?
-  skills        String[]
+  skills        String?
   github_url    String?
   is_public     Boolean   @default(true)
   created_at    DateTime  @default(now())
@@ -27,16 +27,19 @@ model User {
   sent_requests CollaborationRequest[] @relation("SentRequests")
   recv_requests CollaborationRequest[] @relation("ReceivedRequests")
   notifications Notification[]
+  document_access DocumentAccess[] @relation("DocumentAccesses")
 }
 
 model Idea {
   id           String    @id @default(uuid())
   title        String
   description  String
-  tags         String[]
+  tags         String?
   media_url    String?
   media_type   String?   // 'image' or 'video'
   is_anonymous Boolean   @default(false)
+  encrypted_doc_path String?
+  doc_iv       String?
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
 
@@ -47,6 +50,20 @@ model Idea {
   comments     Comment[]
   requests     CollaborationRequest[]
   project      Project?
+  document_access DocumentAccess[]
+}
+
+model DocumentAccess {
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+
+  user_id    String
+  user       User     @relation("DocumentAccesses", fields: [user_id], references: [id])
+
+  idea_id    String
+  idea       Idea     @relation(fields: [idea_id], references: [id])
+
+  @@unique([user_id, idea_id])
 }
 
 model Vote {

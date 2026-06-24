@@ -1,3 +1,6 @@
+import 'dotenv/config';
+import * as WebSocket from 'ws';
+(global as any).WebSocket = WebSocket;
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 

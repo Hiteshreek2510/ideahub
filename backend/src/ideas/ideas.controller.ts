@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { IdeasService } from './ideas.service';
@@ -9,6 +10,11 @@ import { UpdateIdeaDto } from './dto/update-idea.dto';
 export class IdeasController {
   constructor(private readonly ideasService: IdeasService) {}
 
+  @Get('public/:id')
+  getPublic(@Param('id') id: string) {
+    return this.ideasService.findOne(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
@@ -17,6 +23,36 @@ export class IdeasController {
       throw new BadRequestException('No file uploaded');
     }
     return this.ideasService.uploadFile(file);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('document')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadDocument(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No document uploaded');
+    }
+    return this.ideasService.uploadDocument(file);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/document')
+  async getDecryptedDocument(@Param('id') id: string, @Request() req: any, @Res() res: Response) {
+    const userId = req.user.id;
+    const buffer = await this.ideasService.getDecryptedDocument(id, userId);
+    res.setHeader('Content-Type', 'application/pdf'); // Defaulting to PDF as requested
+    res.send(buffer);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/share-document')
+  async shareDocument(
+    @Param('id') id: string,
+    @Body('targetUserId') targetUserId: string,
+    @Request() req: any
+  ) {
+    const ownerId = req.user.id;
+    return this.ideasService.grantDocumentAccess(id, targetUserId, ownerId);
   }
 
   @UseGuards(JwtAuthGuard)

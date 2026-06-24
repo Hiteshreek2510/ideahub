@@ -12,6 +12,7 @@ export default function CreateIdea() {
     const [tags, setTags] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [documentFile, setDocumentFile] = useState<File | null>(null);
     const router = useRouter();
 
     const [error, setError] = useState("");
@@ -25,6 +26,13 @@ export default function CreateIdea() {
         }
     };
 
+    const handleDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selected = e.target.files?.[0];
+        if (selected) {
+            setDocumentFile(selected);
+        }
+    };
+
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
@@ -33,6 +41,8 @@ export default function CreateIdea() {
         try {
             let media_url = undefined;
             let media_type = undefined;
+            let encrypted_doc_path = undefined;
+            let doc_iv = undefined;
 
             if (file) {
                 // Upload file first
@@ -57,6 +67,28 @@ export default function CreateIdea() {
                 media_type = file.type.startsWith('video/') ? 'video' : 'image';
             }
 
+            if (documentFile) {
+                const docData = new FormData();
+                docData.append('file', documentFile);
+                
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+                const docRes = await fetch(`${apiUrl}/ideas/document`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: docData
+                });
+
+                if (!docRes.ok) {
+                    const errText = await docRes.text();
+                    throw new Error(JSON.parse(errText).message || 'Failed to upload private document');
+                }
+                const resData = await docRes.json();
+                encrypted_doc_path = resData.encrypted_doc_path;
+                doc_iv = resData.doc_iv;
+            }
+
             const data = await fetchAPI('/ideas', {
                 method: 'POST',
                 body: JSON.stringify({ 
@@ -64,7 +96,9 @@ export default function CreateIdea() {
                     description, 
                     tags, 
                     media_url, 
-                    media_type 
+                    media_type,
+                    encrypted_doc_path,
+                    doc_iv
                 }),
             });
 
@@ -88,6 +122,13 @@ export default function CreateIdea() {
                 <div>
                     <h1 className="text-2xl font-bold text-white mb-1">Post a New Idea</h1>
                     <p className="text-slate-400 text-sm">Share your vision with the community and find people to build it with.</p>
+                </div>
+
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                    <p className="text-sm text-amber-200/90 leading-relaxed font-medium">
+                        <span className="font-bold text-amber-500 mr-2">NOTE:</span> 
+                        Only compact and high-level information should be disclosed in the public post description. Attach detailed or sensitive project information as a <span className="text-white">Private Document</span> below. The private document will be encrypted and hidden from the public until you manually share it with trusted collaborators.
+                    </p>
                 </div>
 
                 <form onSubmit={handleCreate} className="space-y-5 mt-6">
@@ -154,6 +195,27 @@ export default function CreateIdea() {
                                     type="button"
                                     onClick={() => { setFile(null); setPreviewUrl(null); }}
                                     className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-rose-500/80 rounded-full text-white backdrop-blur-sm transition-all"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-300 ml-1">Private Document (Encrypted)</label>
+                        {!documentFile ? (
+                            <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-white/10 rounded-xl hover:bg-white/5 hover:border-purple-500/50 transition-all cursor-pointer">
+                                <p className="text-sm text-slate-400"><span className="font-semibold text-purple-400">Attach Document</span> (PDF, Word)</p>
+                                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.txt" onChange={handleDocumentChange} />
+                            </label>
+                        ) : (
+                            <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                                <span className="text-sm text-white truncate pr-4">{documentFile.name}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => setDocumentFile(null)}
+                                    className="p-1.5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-lg transition-all"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>

@@ -9,7 +9,8 @@ import {
   GitBranch, 
   Shield, 
   Send, 
-  Search 
+  Search,
+  FileLock
 } from "lucide-react";
 
 export default function Community() {
@@ -85,6 +86,15 @@ export default function Community() {
                   <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white text-left">
                     <GitBranch className="w-4 h-4 text-slate-100" />
                     GitHub Collab
+                  </button>
+
+                  <div className="h-px bg-white/10 my-1 mx-2" />
+                  <button 
+                    onClick={() => alert("Private document access granted to this user. They can now decrypt and view it!")}
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-amber-400 hover:bg-amber-500/10 hover:text-amber-300 text-left"
+                  >
+                    <FileLock className="w-4 h-4" />
+                    Share Private Document
                   </button>
                   
                   {/* Admin Only Option */}

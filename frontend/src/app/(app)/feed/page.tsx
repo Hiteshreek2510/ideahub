@@ -6,16 +6,24 @@ import {
   MessageCircle, 
   Users,
   Plus,
-  Loader2
+  Loader2,
+  Share
 } from "lucide-react";
 import { fetchAPI } from "@/lib/api";
 import Link from "next/link";
+import ProtectedViewer from "@/components/ProtectedViewer";
 
 export default function Feed() {
   const [liked, setLiked] = useState<Record<number, boolean>>({});
 
   const toggleLike = (id: number) => {
     setLiked(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleShare = (id: string) => {
+    const url = `${window.location.origin}/post/${id}`;
+    navigator.clipboard.writeText(url);
+    alert('Public share link copied to clipboard!');
   };
 
   const [ideas, setIdeas] = useState<any[]>([]);
@@ -56,11 +64,11 @@ export default function Feed() {
           <div className="text-center text-slate-400 py-20 bg-[#121221] rounded-2xl border border-white/5">
             No ideas posted yet. Be the first!
           </div>
-        ) : ideas.map((idea) => (
-          <article 
-            key={idea.id} 
-            className="bg-[#121221] border border-white/5 rounded-2xl overflow-hidden shadow-xl shadow-black/40 p-5 transition hover:border-white/10"
-          >
+        ) : !loading && ideas.length > 0 && ideas.map((idea) => (
+          <ProtectedViewer key={idea.id}>
+            <article 
+              className="bg-[#121221] border border-white/5 rounded-2xl p-6 shadow-2xl hover:border-white/10 transition-colors flex flex-col"
+            >
             {/* Author Row */}
             <div className="flex items-center gap-3 mb-4">
               <img 
@@ -98,7 +106,7 @@ export default function Feed() {
 
             {/* Sub-info chip */}
             <div className="bg-[#1a1a2e] border border-white/5 rounded-lg p-3 flex flex-wrap items-center gap-2 mb-5">
-              {(idea.tags || []).map((tag: string) => (
+              {idea.tags && (typeof idea.tags === 'string' ? idea.tags.split(',') : idea.tags).map((tag: string) => (
                  <span key={tag.trim()} className="px-2 py-1 bg-white/5 rounded text-xs text-slate-300 font-medium">#{tag.trim()}</span>
               ))}
             </div>
@@ -122,6 +130,13 @@ export default function Feed() {
                   <MessageCircle className="w-5 h-5" />
                   <span className="font-medium">0</span>
                 </button>
+                <button 
+                  onClick={() => handleShare(idea.id)}
+                  className="flex items-center gap-1.5 hover:text-white transition px-3 py-1"
+                  title="Share Public Link"
+                >
+                  <Share className="w-5 h-5" />
+                </button>
                 
                 <button className="flex items-center gap-1.5 hover:text-indigo-300 text-indigo-400 transition ml-2 px-3 py-1 bg-indigo-500/10 rounded-lg">
                   <span className="font-semibold text-sm">Apply</span>
@@ -132,8 +147,9 @@ export default function Feed() {
                 <Users className="w-5 h-5" />
                 View Votes
               </button>
-            </div>
-          </article>
+              </div>
+            </article>
+          </ProtectedViewer>
         ))}
 
       </div>
